@@ -11,6 +11,7 @@ from .models import ToDo
 from .serializers import ToDoSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .encryption import encrypt_data 
 
 @api_view(['POST'])
 def register_user(request):
@@ -69,25 +70,32 @@ def custom_login(request):
 
     if user is not None:
         refresh = RefreshToken.for_user(user)
-        serializer = UserSerializer(user)
+        access_token = str(refresh.access_token)
+
+        # Encrypt response fields
+        encrypted_username = encrypt_data(user.username)
+        encrypted_email = encrypt_data(user.email)
 
         return Response({
             'refresh': str(refresh),
-            'token': str(refresh.access_token),
-            'user': serializer.data
+            'token': access_token,
+            'user': {
+                'username': encrypted_username,
+                'email': encrypted_email
+            }
         }, status=status.HTTP_200_OK)
 
     return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
 class ToDoViewSet(viewsets.ModelViewSet):
     queryset = ToDo.objects.all()
     serializer_class = ToDoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    
+    @api_view(['GET'])
     def get_queryset(self):
         # Each user only sees their own tasks
         return ToDo.objects.filter(user=self.request.user)
-
+    
+    @api_view(['GET'])
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
