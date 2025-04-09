@@ -1,0 +1,18 @@
+.home-container {
+    max-width: 600px;
+    margin: auto;
+    font-family: sans-serif;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  
+  .btn:hover {
+    background: #0056b3;
+  }
+  
