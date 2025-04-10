@@ -26,3 +26,6 @@ class ToDoSerializer(serializers.ModelSerializer):
         model = ToDo
         fields = '__all__'  # or list them individually
         read_only_fields = ['id', 'created_at', 'updated_at']
+        
+class LogoutSerializer(serializers.Serializer):
+    message = serializers.CharField(read_only=True)        

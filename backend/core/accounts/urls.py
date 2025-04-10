@@ -11,5 +11,5 @@ urlpatterns = [
     path('login/', views.custom_login),
     path('profile/', views.get_user),
     path('', include(router.urls)),
-    
+    path('logout/', views.logout_user),
 ]

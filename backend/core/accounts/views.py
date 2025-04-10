@@ -99,3 +99,9 @@ class ToDoViewSet(viewsets.ModelViewSet):
     @api_view(['GET'])
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+@api_view(['POST'])
+def logout_user(request):
+    response = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+    response.delete_cookie("access_token")
+    return response
