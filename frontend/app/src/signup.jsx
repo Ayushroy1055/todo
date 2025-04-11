@@ -33,7 +33,7 @@ const Signup = () => {
                 alert("Signup successful!");
                 // Redirect user or handle success
             } else {
-                alert(data.message || "Signup failed");
+                alert(data.message || "User already exists");
             }
         } catch (error) {
             console.error("Error:", error);

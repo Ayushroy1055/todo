@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .encryption import encrypt_data 
 
+
 @api_view(['POST'])
 def register_user(request):
     serializer = RegisterSerializer(data=request.data)
@@ -91,12 +92,12 @@ class ToDoViewSet(viewsets.ModelViewSet):
     serializer_class = ToDoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    @api_view(['GET'])
+    # @api_view(['GET'])
     def get_queryset(self):
         # Each user only sees their own tasks
         return ToDo.objects.filter(user=self.request.user)
     
-    @api_view(['GET'])
+    #   @api_view(['GET'])
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -105,3 +106,48 @@ def logout_user(request):
     response = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
     response.delete_cookie("access_token")
     return response
+
+# Assign Task API
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def assign_task(request):
+    try:
+        task = ToDo.objects.get(id=request.data['task_id'])
+        user = User.objects.get(id=request.data['user_id'])
+        task.assigned_to = user
+        task.save()
+        return Response({"message": "Task assigned successfully!"}, status=status.HTTP_200_OK)
+    except ToDo.DoesNotExist:
+        return Response({"error": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+ # Delete Task
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_task(request, task_id):
+    try:
+        task = ToDo.objects.get(id=task_id, user=request.user)
+        task.delete()
+        return Response({"message": "Task deleted successfully!"}, status=status.HTTP_200_OK)
+    except ToDo.DoesNotExist:
+        return Response({"error": "Task not found or unauthorized"}, status=status.HTTP_404_NOT_FOUND)
+    
+# Manage Task
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def manage_task(request, task_id):
+    try:
+        task = ToDo.objects.get(id=task_id, user=request.user)
+    except ToDo.DoesNotExist:
+        return Response({"error": "Task not found or unauthorized"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ToDoSerializer(task, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Task updated!", "task": serializer.data})
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+    
+

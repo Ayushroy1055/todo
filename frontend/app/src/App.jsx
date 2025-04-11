@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Signup from "./signup";
 import Login from "./login";
+import Todo from "./todo";
 import Home from "./home";
+import Delete from "./delete";
+import Assign from "./assign"
 import Logout from "./logout"; // adjust path as needed
 
 
