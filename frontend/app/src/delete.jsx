@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const API_URL = "http://localhost:8000/api/todos/";
+const API_URL = "http://localhost:8000/api/profile/";
 
 const Delete = () => {
   const [todos, setTodos] = useState([]);

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import ToDo
+# from .models import ToDo
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,11 +21,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
-class ToDoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ToDo
-        fields = '__all__'  # or list them individually
-        read_only_fields = ['id', 'created_at', 'updated_at']
+# class ToDoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ToDo
+#         fields = '__all__'  # or list them individually
+#         read_only_fields = ['id', 'created_at', 'updated_at']
         
 class LogoutSerializer(serializers.Serializer):
     message = serializers.CharField(read_only=True)        
