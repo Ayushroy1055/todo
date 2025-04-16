@@ -25,7 +25,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'  # or list them individually
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['owner']
         
 class LogoutSerializer(serializers.Serializer):
     message = serializers.CharField(read_only=True)        

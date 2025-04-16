@@ -6,10 +6,4 @@ from .views import TaskViewSet
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
 
-urlpatterns = [
-    path('register/', views.register_user),
-    path('login/', views.custom_login),
-    path('profile/', views.get_user),
-    path('', include(router.urls)),
-    path('logout/', views.logout_user),
-]
+urlpatterns = router.urls
