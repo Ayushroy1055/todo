@@ -6,6 +6,4 @@ from .views import TaskViewSet
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
 
-urlpatterns = [
-    path('', include(router.urls)),  # Includes all /tasks/ endpoints
-]
+urlpatterns = router.urls
