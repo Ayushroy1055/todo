@@ -12,7 +12,9 @@ from rest_framework import viewsets,permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .encryption import encrypt_data 
-
+from rest_framework import viewsets, permissions
+from .models import Task
+from .serializers import TaskSerializer
 
 @api_view(['POST'])
 def register_user(request):
@@ -151,3 +153,23 @@ def logout_user(request):
  
     
 
+# views.py
+
+class TaskViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+        
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_task(request):
+    serializer = TaskSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(owner=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
