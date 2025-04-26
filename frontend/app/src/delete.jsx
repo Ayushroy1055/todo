@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const API_URL = "http://localhost:8000/api/profile/";
+const API_URL = "http://localhost:8000/api/tasks/delete/";
 
 const Delete = () => {
   const [todos, setTodos] = useState([]);
@@ -12,7 +12,12 @@ const Delete = () => {
 
   const fetchTodos = async () => {
     try {
-      const response = await axios.get(API_URL);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setTodos(response.data);
     } catch (error) {
       console.error("Error fetching todos:", error);
@@ -21,7 +26,12 @@ const Delete = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}${id}/`);
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_URL}${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setTodos(todos.filter(todo => todo.id !== id));
     } catch (error) {
       console.error("Error deleting todo:", error);
@@ -34,7 +44,7 @@ const Delete = () => {
       <ul style={{ listStyle: "none", padding: 0 }}>
         {todos.map((todo) => (
           <li key={todo.id} style={{ margin: "10px 0" }}>
-            {todo.text}
+            {todo.title}
             <button
               onClick={() => handleDelete(todo.id)}
               style={{ marginLeft: "10px", color: "red" }}
@@ -49,3 +59,4 @@ const Delete = () => {
 };
 
 export default Delete;
+  

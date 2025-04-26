@@ -3,10 +3,15 @@ from .models import Task
 from django.contrib.auth.models import User
 
 class TaskSerializer(serializers.ModelSerializer):
+    created_by = serializers.ReadOnlyField(source='created_by.username')
+    assigned_to = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field='username', allow_null=True, required=False
+    )
+
     class Meta:
         model = Task
         fields = '__all__'
-        read_only_fields = ['owner']
+        read_only_fields = ['user']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

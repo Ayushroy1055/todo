@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Task(models.Model):
-    owner = models.ForeignKey(User, related_name='tasks', on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    due_date = models.DateField(null=True, blank=True)
-    assignee = models.ForeignKey(User, related_name='assigned_tasks', on_delete=models.SET_NULL, null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_tasks')
+    assigned_to = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assigned_tasks')
     completed = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

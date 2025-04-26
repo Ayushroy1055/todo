@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { encryptData, decryptData } from "./crypto"; // Import encryption utilities
 
 const Login = () => {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
     });
-    const navigate = useNavigate(); // This must be inside the component
+    const navigate = useNavigate();
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -16,31 +17,37 @@ const Login = () => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    try {
-        const response = await fetch("http://127.0.0.1:8000/api/login/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
+        try {
+            // Encrypt formData before sending
+            const encryptedPayload = encryptData(formData);
 
-        const data = await response.json();
+            const response = await fetch("http://127.0.0.1:8000/api/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ encrypted_data: encryptedPayload }),
+            });
 
-        if (response.ok) {
-            alert("Login successful!");
-            localStorage.setItem("token", data.token); // Save auth token
-            navigate("/home");
-        } else {
-            alert(data.detail || data.message || "Login failed");
+            const data = await response.json();
+
+            if (response.ok) {
+                // Decrypt response
+                const decryptedResponse = decryptData(data.encrypted_response);
+
+                alert("Login successful!");
+                localStorage.setItem("token", decryptedResponse.token); // Save decrypted token
+                navigate("/home");
+            } else {
+                alert(data.detail || data.message || "Login failed");
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            alert("Failed to connect to server. Please check your backend.");
         }
-    } catch (error) {
-        console.error("Fetch error:", error);
-        alert("Failed to connect to server. Please check your backend.");
-    }
-};
+    };
 
     return (
         <div style={{ textAlign: "center", marginTop: "50px" }}>

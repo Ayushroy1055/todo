@@ -67,6 +67,8 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+FERNET_SECRET = config("FERNET_SECRET").encode()
+
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [

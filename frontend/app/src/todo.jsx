@@ -17,7 +17,7 @@ const CreateTask = () => {
   const handleCreate = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://127.0.0.1:8000/api/accounts/", task, {
+      await axios.post("http://127.0.0.1:8000/api/tasks/create/", task, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
