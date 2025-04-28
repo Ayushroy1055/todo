@@ -45,6 +45,10 @@ INSTALLED_APPS = [
 ]
 # REST Framework config
 REST_FRAMEWORK = {
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #     'utils.encryption_renderer.EncryptedJSONRenderer',  # Use our custom renderer
+    #     'rest_framework.renderers.JSONRenderer',  # Fallback to regular JSON renderer if needed
+    # ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',

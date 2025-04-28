@@ -1,14 +1,38 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { encryptData, decryptData } from "./crypto"; // Import encryption utilities
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {disableReactDevTools} from '@fvilers/disable-react-devtools'
+
+//Right Click
+// document.oncontextmenu=()=>{
+//     //alert("Right click prohibited")
+//     return false
+// }
+// //F12 key
+// document.onkeydown=e=>{
+//     if(e.key=="F12")
+//     {
+//         // alert("Don't open inspect element")
+//         return false
+//     }
+//     if(e.ctrlKey && e.shiftKey  && e.key == 'C'.charCodeAt(0)){
+//         return false
+//     }
+    
+// }
+
+
+// Only disable in production
+if (process.env.NODE_ENV === 'production') {
+    disableReactDevTools();
+  }
 
 const Login = () => {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
     });
-    const navigate = useNavigate();
-
+    const navigate = useNavigate(); // This must be inside the component
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -17,37 +41,31 @@ const Login = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        try {
-            // Encrypt formData before sending
-            const encryptedPayload = encryptData(formData);
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/login/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
 
-            const response = await fetch("http://127.0.0.1:8000/api/login/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ encrypted_data: encryptedPayload }),
-            });
+        const data = await response.json();
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Decrypt response
-                const decryptedResponse = decryptData(data.encrypted_response);
-
-                alert("Login successful!");
-                localStorage.setItem("token", decryptedResponse.token); // Save decrypted token
-                navigate("/home");
-            } else {
-                alert(data.detail || data.message || "Login failed");
-            }
-        } catch (error) {
-            console.error("Fetch error:", error);
-            alert("Failed to connect to server. Please check your backend.");
+        if (response.ok) {
+            alert("Login successful!");
+            localStorage.setItem("token", data.token); // Save auth token
+            navigate("/home");
+        } else {
+            alert(data.detail || data.message || "Login failed");
         }
-    };
+    } catch (error) {
+        console.error("Fetch error:", error);
+        alert("Failed to connect to server. Please check your backend.");
+    }
+};
 
     return (
         <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -61,7 +79,18 @@ const Login = () => {
                     value={formData.username}
                     onChange={handleChange}
                     style={{ margin: "5px", padding: "8px" }}
+
                 />
+                <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                style={{ margin: "5px", padding: "8px" }}
+            />
+
                 <input
                     type="password"
                     name="password"

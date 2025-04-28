@@ -6,7 +6,22 @@ import Home from "./home";
 import Delete from "./delete";
 import Assign from "./assign"
 import Logout from "./logout"; // adjust path as needed
-
+document.oncontextmenu=()=>{
+    //alert("Right click prohibited")
+    return false
+}
+//F12 key
+document.onkeydown=e=>{
+    if(e.key=="F12")
+    {
+        // alert("Don't open inspect element")
+        return false
+    }
+    if(e.ctrlKey && e.shiftKey  && e.key == 'C'.charCodeAt(0)){
+        return false
+    }
+    
+}
 
 const App = () => {
     return (
